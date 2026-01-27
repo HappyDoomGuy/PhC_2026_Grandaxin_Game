@@ -25,6 +25,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const boxAreaRef = useRef<HTMLDivElement>(null);
   const tapAreaRef = useRef<HTMLDivElement>(null);
+  const lastInteractionRef = useRef<{ type: 'touch' | 'mouse' | null; time: number }>({ type: null, time: 0 });
   
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -36,6 +37,10 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
   const [isReloading, setIsReloading] = useState(false);
   const [reloadPhase, setReloadPhase] = useState<'idle' | 'exiting' | 'entering'>('idle');
   const [imgError, setImgError] = useState(false);
+  
+  // Statistics
+  const [totalPillsUsed, setTotalPillsUsed] = useState(0);
+  const [symptomsEliminated, setSymptomsEliminated] = useState({ blue: 0, green: 0, red: 0 });
 
   const objectsRef = useRef<GameObject[]>([]);
   const scoreRef = useRef(0);
@@ -169,6 +174,8 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     setIsReloading(false);
     setReloadPhase('idle');
     setBoxOffsetX(0);
+    setTotalPillsUsed(0);
+    setSymptomsEliminated({ blue: 0, green: 0, red: 0 });
   };
 
   const playSound = (type: 'shoot' | 'pop' | 'bossHit' | 'leak' | 'reload') => {
@@ -283,6 +290,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
 
   const triggerReload = () => {
     if (isReloading) return;
+    
     // Сохраняем текущую позицию коробки перед перезарядкой
     savedBoxOffsetXRef.current = boxOffsetX;
     setIsReloading(true);
@@ -320,6 +328,9 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
       triggerReload();
       return;
     }
+
+    // Увеличиваем счетчик использованных таблеток ДО уменьшения количества
+    setTotalPillsUsed(prev => prev + 1);
 
     setPillsInPack(prev => {
       const next = prev - 1;
@@ -505,6 +516,18 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
                 if (target.health <= 0) {
                   playSound('pop');
                   setScore(s => s + (target.maxHealth * 10));
+                  
+                  // Увеличиваем счетчик устраненных симптомов по типу
+                  if (target.imageSrc) {
+                    if (target.imageSrc === 'blue.png') {
+                      setSymptomsEliminated(prev => ({ ...prev, blue: prev.blue + 1 }));
+                    } else if (target.imageSrc === 'green.png') {
+                      setSymptomsEliminated(prev => ({ ...prev, green: prev.green + 1 }));
+                    } else if (target.imageSrc === 'red.png') {
+                      setSymptomsEliminated(prev => ({ ...prev, red: prev.red + 1 }));
+                    }
+                  }
+                  
                   objects.splice(j, 1); 
                 } else {
                   playSound('bossHit');
@@ -617,6 +640,15 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
       <canvas ref={backgroundCanvasRef} className="absolute inset-0 block w-full h-full z-0" />
       <canvas ref={canvasRef} className="absolute inset-0 block w-full h-full z-[1]" />
       
+      {/* Bio-Integrity bar at the very top */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-slate-900/50 border-b border-white/5 overflow-hidden backdrop-blur-sm relative z-10">
+        <div 
+          className={`h-full transition-all duration-300 ${integrity > 50 ? 'bg-emerald-500' : integrity > 20 ? 'bg-amber-500' : 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)]'}`}
+          style={{ width: `${integrity}%` }}
+        />
+        <div className="absolute top-3 left-2 text-[8px] font-black text-white/50 uppercase tracking-[0.2em]">Био-Целостность: {integrity}%</div>
+      </div>
+
       <div className="absolute top-2 left-0 w-full flex flex-col gap-2 px-3 pointer-events-none z-10">
         <div className="flex justify-between items-center gap-2">
           <div className="bg-slate-900/80 backdrop-blur-xl px-3 py-1.5 rounded-xl border border-white/10 shadow-2xl">
@@ -630,18 +662,10 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           
           <button 
             onClick={onExit}
-            className="p-2 bg-white/5 rounded-xl border border-white/10 text-white/50 hover:text-white pointer-events-auto active:scale-90 transition-all backdrop-blur-md"
+            className="p-2 bg-white/5 rounded-xl border border-white/10 text-white/50 hover:text-white pointer-events-auto active:scale-90 transition-all backdrop-blur-md relative z-20"
           >
             <span className="text-base font-bold">✕</span>
           </button>
-        </div>
-
-        <div className="w-full bg-slate-900/50 h-2 rounded-full border border-white/5 overflow-hidden backdrop-blur-sm relative">
-           <div 
-             className={`h-full transition-all duration-300 ${integrity > 50 ? 'bg-emerald-500' : integrity > 20 ? 'bg-amber-500' : 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)]'}`}
-             style={{ width: `${integrity}%` }}
-           />
-           <div className="absolute top-3 left-2 text-[8px] font-black text-white/50 uppercase tracking-[0.2em]">Био-Целостность: {integrity}%</div>
         </div>
       </div>
 
@@ -729,10 +753,12 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         ref={tapAreaRef}
         onMouseDown={handleBoxInteraction}
         onTouchStart={handleBoxInteraction}
+        onTouchEnd={(e) => e.preventDefault()}
         className="absolute inset-0 w-full h-full z-[15] cursor-pointer"
         style={{ 
           pointerEvents: gameOver || isReloading ? 'none' : 'auto',
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
+          touchAction: 'manipulation'
         }}
       />
 
@@ -752,9 +778,54 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           <h2 className="text-4xl font-black text-white mb-2 leading-none tracking-tighter uppercase text-red-500">СИСТЕМА<br/>РАЗРУШЕНА</h2>
           <p className="text-slate-500 mb-10 uppercase tracking-[0.2em] text-[10px] font-bold">Инфекция преодолела биозащиту</p>
           
-          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-8 mb-10 w-full">
-            <p className="text-slate-500 uppercase text-[9px] font-black tracking-widest mb-2">Финальный счет уничтожений</p>
-            <div className="text-6xl font-mono font-bold text-white tracking-tighter">{score}</div>
+          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 mb-6 w-full space-y-4">
+            <div>
+              <p className="text-slate-500 uppercase text-[9px] font-black tracking-widest mb-2">Финальный счет уничтожений</p>
+              <div className="text-6xl font-mono font-bold text-white tracking-tighter">{score}</div>
+            </div>
+            
+            <div className="border-t border-white/10 pt-4 space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 text-[10px] uppercase tracking-widest">Использовано таблеток:</span>
+                <span className="text-white font-mono font-bold text-xl">{totalPillsUsed}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 text-[10px] uppercase tracking-widest">Использовано пачек:</span>
+                <span className="text-white font-mono font-bold text-xl">{Math.ceil(totalPillsUsed / 20)}</span>
+              </div>
+              
+              <div className="border-t border-white/5 pt-3">
+                <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-2">Устранено симптомов:</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      <span className="text-slate-300 text-[10px] uppercase">Синие:</span>
+                    </div>
+                    <span className="text-white font-mono font-bold">{symptomsEliminated.blue}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <span className="text-slate-300 text-[10px] uppercase">Зеленые:</span>
+                    </div>
+                    <span className="text-white font-mono font-bold">{symptomsEliminated.green}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      <span className="text-slate-300 text-[10px] uppercase">Красные:</span>
+                    </div>
+                    <span className="text-white font-mono font-bold">{symptomsEliminated.red}</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-white/5">
+                    <span className="text-slate-300 text-[10px] uppercase font-bold">Всего:</span>
+                    <span className="text-white font-mono font-bold text-lg">{symptomsEliminated.blue + symptomsEliminated.green + symptomsEliminated.red}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <button 
