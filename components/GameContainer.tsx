@@ -1,5 +1,16 @@
 
 import React, { useEffect, useRef, useState } from 'react';
+import blueImage from '../blue.png';
+import greenImage from '../green.png';
+import redImage from '../red.png';
+import packImage from '../pack.png';
+
+// Image paths mapping
+const imagePaths: { [key: string]: string } = {
+  'blue.png': blueImage,
+  'green.png': greenImage,
+  'red.png': redImage
+};
 
 interface GameObject {
   x: number;
@@ -435,7 +446,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     const imageNames = ['blue.png', 'green.png', 'red.png'];
     imageNames.forEach(name => {
       const img = new Image();
-      img.src = name;
+      img.src = imagePaths[name];
       img.onload = () => {
         symptomImagesRef.current[name] = img;
       };
@@ -702,7 +713,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
               
               {!imgError ? (
                 <img 
-                  src="pack.png" 
+                  src={packImage} 
                   alt="Pill Pack" 
                   draggable="false"
                   onDragStart={(e) => e.preventDefault()}
