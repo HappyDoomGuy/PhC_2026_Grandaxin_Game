@@ -1,20 +1,32 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Grandaxin Defence
 
-# Run and deploy your AI Studio app
+Защитите организм от симптомов в динамичной игре-шутере. Используйте Grandaxin для уничтожения симптомов и защиты биологической целостности системы.
 
-This contains everything you need to run your app locally.
+## Описание
 
-View your app in AI Studio: https://ai.studio/apps/drive/1ZYPxGgtquEmih6P820eJh-wJzFUIYuV_
+Grandaxin Defence - это мобильная игра-шутер с медицинской тематикой. Ваша задача - защитить организм от симптомов, используя таблетки Grandaxin для их уничтожения. Играйте на космическом фоне, следите за биологической целостностью и уничтожайте симптомы различных типов.
 
-## Run Locally
+## Особенности
 
-**Prerequisites:**  Node.js
+- Динамичный геймплей с плавным управлением
+- Космический фон с анимированными звездами
+- Система перезарядки упаковки таблеток
+- Различные типы симптомов (синие, зеленые, красные)
+- Система уровней и подсчета очков
+- Полная локализация на русский язык
 
+## Запуск локально
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+**Требования:** Node.js
+
+1. Установите зависимости:
+   ```bash
+   npm install
+   ```
+
+2. Запустите приложение:
+   ```bash
+   npm run dev
+   ```
+
+3. Откройте браузер по адресу: http://localhost:3000
