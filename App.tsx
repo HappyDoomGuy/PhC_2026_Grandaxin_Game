@@ -6,7 +6,7 @@ const App: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
 
   return (
-    <div className="w-full h-full overflow-hidden bg-[#05070a] text-slate-100 flex items-center justify-center" style={{ height: '100dvh', height: 'calc(var(--vh, 1vh) * 100)', minHeight: 0 }}>
+    <div className="w-full h-full overflow-hidden bg-[#05070a] text-slate-100 flex items-center justify-center" style={{ height: 'calc(var(--vh, 1vh) * 100)', minHeight: 0 }}>
       {/* Mobile-first Container: Forces portrait aspect ratio on desktop */}
       <div className="relative h-full w-full max-w-[500px] aspect-[9/16] bg-[#0a0f1e] shadow-2xl overflow-hidden shadow-blue-900/20">
         {!isStarted ? (
