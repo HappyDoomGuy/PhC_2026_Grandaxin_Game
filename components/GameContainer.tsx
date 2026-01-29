@@ -785,54 +785,55 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
       `}</style>
 
       {gameOver && (
-        <div className="absolute inset-0 bg-slate-950/98 backdrop-blur-2xl flex flex-col items-center justify-center p-8 text-center z-50 animate-in fade-in duration-500">
-          <h2 className="text-4xl font-black text-white mb-2 leading-none tracking-tighter uppercase text-red-500">СИСТЕМА<br/>РАЗРУШЕНА</h2>
-          <p className="text-slate-500 mb-10 uppercase tracking-[0.2em] text-[10px] font-bold">Инфекция преодолела биозащиту</p>
-          
-          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 mb-6 w-full space-y-4">
+        <div 
+          className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-50 animate-in fade-in duration-500 overflow-y-auto"
+          style={{ background: 'linear-gradient(135deg, #75C4E6 0%, #CAE8FA 100%)' }}
+        >
+          <h2 className="text-xl font-black text-slate-800 tracking-tight mb-4 w-full max-w-md">Счет игры «Грандаксин может»</h2>
+
+          <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-6 mb-6 w-full space-y-4 shadow-xl shadow-slate-300/30">
             <div>
-              <p className="text-slate-500 uppercase text-[9px] font-black tracking-widest mb-2">Финальный счет уничтожений</p>
-              <div className="text-6xl font-mono font-bold text-white tracking-tighter">{score}</div>
+              <div className="text-5xl font-mono font-bold text-slate-800 tracking-tighter">{score}</div>
             </div>
             
-            <div className="border-t border-white/10 pt-4 space-y-3">
+            <div className="border-t border-slate-200 pt-4 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-[10px] uppercase tracking-widest">Использовано таблеток:</span>
-                <span className="text-white font-mono font-bold text-xl">{totalPillsUsed}</span>
+                <span className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Использовано таблеток:</span>
+                <span className="text-slate-800 font-mono font-bold text-lg">{totalPillsUsed}</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-[10px] uppercase tracking-widest">Использовано пачек:</span>
-                <span className="text-white font-mono font-bold text-xl">{Math.ceil(totalPillsUsed / 20)}</span>
+                <span className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Использовано пачек:</span>
+                <span className="text-slate-800 font-mono font-bold text-lg">{Math.ceil(totalPillsUsed / 20)}</span>
               </div>
               
-              <div className="border-t border-white/5 pt-3">
-                <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-2">Устранено симптомов:</p>
+              <div className="border-t border-slate-200 pt-3">
+                <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-2">Устранено симптомов:</p>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                      <span className="text-slate-300 text-[10px] uppercase">Синие:</span>
+                      <span className="text-slate-700 text-sm font-medium">Тревога:</span>
                     </div>
-                    <span className="text-white font-mono font-bold">{symptomsEliminated.blue}</span>
+                    <span className="text-slate-800 font-mono font-bold">{symptomsEliminated.blue}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                      <span className="text-slate-300 text-[10px] uppercase">Зеленые:</span>
+                      <span className="text-slate-700 text-sm font-medium">Нервозность:</span>
                     </div>
-                    <span className="text-white font-mono font-bold">{symptomsEliminated.green}</span>
+                    <span className="text-slate-800 font-mono font-bold">{symptomsEliminated.green}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                      <span className="text-slate-300 text-[10px] uppercase">Красные:</span>
+                      <span className="text-slate-700 text-sm font-medium">Стресс:</span>
                     </div>
-                    <span className="text-white font-mono font-bold">{symptomsEliminated.red}</span>
+                    <span className="text-slate-800 font-mono font-bold">{symptomsEliminated.red}</span>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                    <span className="text-slate-300 text-[10px] uppercase font-bold">Всего:</span>
-                    <span className="text-white font-mono font-bold text-lg">{symptomsEliminated.blue + symptomsEliminated.green + symptomsEliminated.red}</span>
+                  <div className="flex justify-between items-center pt-2 border-t border-slate-200">
+                    <span className="text-slate-700 text-sm font-bold">Всего:</span>
+                    <span className="text-slate-800 font-mono font-bold text-lg">{symptomsEliminated.blue + symptomsEliminated.green + symptomsEliminated.red}</span>
                   </div>
                 </div>
               </div>
@@ -841,9 +842,9 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
 
           <button 
             onClick={resetGame}
-            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all"
+            className="w-full py-5 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-[0.98] transition-all border border-slate-600/50"
           >
-            НАЧАТЬ НОВЫЙ ЦИКЛ
+            Продолжить игру
           </button>
         </div>
       )}

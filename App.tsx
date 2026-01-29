@@ -21,8 +21,8 @@ const App: React.FC = () => {
       <div className="relative h-full w-full max-w-[500px] aspect-[9/16] bg-[#0a0f1e] shadow-2xl overflow-hidden shadow-blue-900/20">
         {/* Первый дисклеймер */}
         {showDisclaimer1 && (
-          <div className="absolute inset-0 bg-slate-950/98 backdrop-blur-2xl flex flex-col items-center justify-center p-6 z-50 overflow-y-auto">
-            <div className="w-full max-w-md space-y-6">
+          <div className="absolute inset-0 bg-slate-950/98 backdrop-blur-2xl flex flex-col items-center justify-start p-6 pt-8 z-50 overflow-y-auto overflow-x-hidden">
+            <div className="w-full max-w-md space-y-6 flex-shrink-0">
               <h2 className="text-2xl font-black text-white mb-4 leading-tight text-center uppercase tracking-tighter">
                 ВАЖНАЯ ИНФОРМАЦИЯ!
               </h2>
