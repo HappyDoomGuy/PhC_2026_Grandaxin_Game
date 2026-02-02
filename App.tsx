@@ -144,9 +144,9 @@ const App: React.FC = () => {
             `}</style>
             <div className="text-center space-y-4">
               <div className="relative flex items-end justify-center gap-0 mb-6 min-h-[9rem]">
-                <img src={redImage} alt="Стресс" className="w-36 h-36 object-contain float-symptom translate-y-3" style={{ animationDelay: '0s', filter: 'drop-shadow(0 4px 8px rgba(59, 130, 246, 0.35)) drop-shadow(0 10px 20px rgba(30, 64, 175, 0.2))' }} />
-                <img src={blueImage} alt="Тревога" className="w-36 h-36 object-contain float-symptom -translate-y-5" style={{ animationDelay: '0.4s', filter: 'drop-shadow(0 4px 8px rgba(59, 130, 246, 0.35)) drop-shadow(0 10px 20px rgba(30, 64, 175, 0.2))' }} />
-                <img src={greenImage} alt="Нервозность" className="w-36 h-36 object-contain float-symptom translate-y-4" style={{ animationDelay: '0.8s', filter: 'drop-shadow(0 4px 8px rgba(59, 130, 246, 0.35)) drop-shadow(0 10px 20px rgba(30, 64, 175, 0.2))' }} />
+                <img src={redImage} alt="Стресс" className="w-36 h-36 object-contain float-symptom translate-y-3" style={{ animationDelay: '0s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
+                <img src={blueImage} alt="Тревога" className="w-36 h-36 object-contain float-symptom -translate-y-5" style={{ animationDelay: '0.4s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
+                <img src={greenImage} alt="Нервозность" className="w-36 h-36 object-contain float-symptom translate-y-4" style={{ animationDelay: '0.8s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
                 <img
                   src={targetImage}
                   alt=""
@@ -157,14 +157,14 @@ const App: React.FC = () => {
                   }}
                 />
               </div>
-              <h1 className="text-5xl font-black tracking-tighter bg-clip-text text-transparent leading-tight" style={{ fontFamily: "'Comic CAT', sans-serif", backgroundImage: 'linear-gradient(to bottom, rgb(30, 41, 59), #0083C1)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}>
+              <h1 className="text-5xl font-black tracking-tighter bg-clip-text text-transparent leading-tight" style={{ fontFamily: 'Inter, system-ui, sans-serif', backgroundImage: 'linear-gradient(to bottom, rgb(30, 41, 59), #0083C1)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}>
                 ГРАНДАКСИН<span className="align-super text-3xl" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span><br/>МОЖЕТ
               </h1>
             </div>
 
-            <div className="relative group cursor-pointer w-full max-w-xs mx-auto" onClick={handleStartClick}>
+            <div className="relative group cursor-pointer w-full max-w-xs mx-auto float-symptom" onClick={handleStartClick} style={{ animationDelay: '0.2s' }}>
                <div className="absolute -inset-1 bg-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-1000"></div>
-               <button className="relative w-full py-4 text-white rounded-2xl font-black text-lg transition-all active:scale-95 shadow-xl" style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: '#0083C1' }}>
+               <button className="relative w-full py-2 text-white rounded-2xl font-black transition-all active:scale-95 shadow-xl" style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: '#0083C1', fontSize: '40px' }}>
                   СТАРТ
                </button>
             </div>
