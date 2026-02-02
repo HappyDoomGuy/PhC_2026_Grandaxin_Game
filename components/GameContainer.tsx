@@ -787,7 +787,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
       {gameOver && (
         <div 
           className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-50 animate-in fade-in duration-500 overflow-y-auto"
-          style={{ background: 'linear-gradient(135deg, #75C4E6 0%, #CAE8FA 100%)' }}
+          style={{ background: 'linear-gradient(180deg, #FFFFFF 0%, #75C4E6 100%)' }}
         >
           <h2 className="text-xl font-black text-slate-800 tracking-tight mb-4 w-full max-w-md">Счет игры «Грандаксин может»</h2>
 
@@ -812,21 +812,21 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      <img src={blueImage} alt="Тревога" className="w-8 h-8 object-contain" />
                       <span className="text-slate-700 text-sm font-medium">Тревога:</span>
                     </div>
                     <span className="text-slate-800 font-mono font-bold">{symptomsEliminated.blue}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <img src={greenImage} alt="Нервозность" className="w-8 h-8 object-contain" />
                       <span className="text-slate-700 text-sm font-medium">Нервозность:</span>
                     </div>
                     <span className="text-slate-800 font-mono font-bold">{symptomsEliminated.green}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      <img src={redImage} alt="Стресс" className="w-8 h-8 object-contain" />
                       <span className="text-slate-700 text-sm font-medium">Стресс:</span>
                     </div>
                     <span className="text-slate-800 font-mono font-bold">{symptomsEliminated.red}</span>
@@ -840,12 +840,20 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
             </div>
           </div>
 
-          <button 
-            onClick={resetGame}
-            className="w-full py-5 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-[0.98] transition-all border border-slate-600/50"
-          >
-            Продолжить игру
-          </button>
+          <div className="w-full space-y-3">
+            <button 
+              onClick={resetGame}
+              className="w-full py-5 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-[0.98] transition-all border border-slate-600/50"
+            >
+              Продолжить игру
+            </button>
+            <span 
+              onClick={onExit}
+              className="block w-full py-4 text-center text-slate-600 hover:text-slate-800 font-medium text-base cursor-pointer active:opacity-80 transition-colors"
+            >
+              Выйти из игры
+            </span>
+          </div>
         </div>
       )}
     </div>
