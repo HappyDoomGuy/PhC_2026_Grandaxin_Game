@@ -40,6 +40,18 @@ const App: React.FC = () => {
     <div className="w-full h-full overflow-hidden bg-[#05070a] text-slate-100 flex items-center justify-center" style={{ height: 'calc(var(--vh, 1vh) * 100)', minHeight: 0 }}>
       {/* Mobile-first Container: Forces portrait aspect ratio on desktop */}
       <div className="relative h-full w-full max-w-[500px] aspect-[9/16] bg-[#0a0f1e] shadow-2xl overflow-hidden shadow-blue-900/20">
+        <style>{`
+          @keyframes attention-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(0, 131, 193, 0.4); }
+            50% { transform: scale(1.04); box-shadow: 0 10px 40px -5px rgba(0, 131, 193, 0.6); }
+          }
+          @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-15deg); }
+            100% { transform: translateX(200%) skewX(-15deg); }
+          }
+          .attention-pulse { animation: attention-pulse 2s ease-in-out infinite; }
+          .shimmer-run { animation: shimmer 2.5s ease-in-out infinite; }
+        `}</style>
         {/* Объединённый дисклеймер */}
         {showDisclaimer && (
           <div 
@@ -47,37 +59,36 @@ const App: React.FC = () => {
             style={{ background: 'linear-gradient(180deg, #FFFFFF 0%, #75C4E6 100%)' }}
           >
             <div className="w-full max-w-md space-y-6 flex-shrink-0">
-              <h2 className="text-xl font-black text-slate-800 tracking-tight mb-4 text-center uppercase">
-                ВАЖНАЯ ИНФОРМАЦИЯ!
-              </h2>
-              
               <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-6 space-y-4 shadow-xl shadow-slate-300/30">
+                <h2 className="text-xl font-black text-slate-800 tracking-tight text-left uppercase">
+                  Важная информация
+                </h2>
                 <p className="font-semibold text-slate-800 mb-3">
                   Прежде чем начать, пожалуйста, внимательно ознакомьтесь с данной информацией:
                 </p>
-                
                 <p className="text-slate-700 text-sm leading-relaxed">
-                  Игра-тапер «Грандаксин может» является развлекательным приложением и создана исключительно в игровых и развлекательных целях.
+                  Игра-тапер «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может» является развлекательным приложением и создана исключительно в игровых и развлекательных целях.
                 </p>
-                
                 <p className="text-slate-700 text-sm leading-relaxed">
                   Игра предназначена только для специалистов здравоохранения (включая, но не ограничиваясь, врачей, медсестер, фельдшеров, студентов медицинских вузов, фармацевтов, провизоров, работников аптек и т.д.).
                 </p>
-                
                 <p className="text-slate-700 text-sm leading-relaxed">
                   <span className="font-semibold text-slate-800">Конфиденциальность.</span> Приложение не собирает, не обрабатывает и не хранит персональные данные пользователей. Весь игровой процесс является анонимным.
                 </p>
-                
                 <p className="text-slate-700 text-sm leading-relaxed">
                   <span className="font-semibold text-slate-800">Не является медицинской услугой:</span> данная игра никоим образом не является медицинским устройством, диагностическим инструментом или средством лечения.
                 </p>
-                
                 <p className="text-slate-700 text-sm leading-relaxed">
                   <span className="font-semibold text-slate-800">Отказ от ответственности.</span> Разработчики и правообладатели игры не несут ответственности за любые решения или действия, предпринятые пользователем на основании информации, впечатлений или ассоциаций, возникших в ходе использования данного приложения.
                 </p>
-                
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-6 space-y-4 shadow-xl shadow-slate-300/30">
+                <h2 className="text-xl font-black text-slate-800 tracking-tight text-left uppercase">
+                  Подтверждение
+                </h2>
                 <p className="text-slate-700 text-sm leading-relaxed">
-                  Я подтверждаю, что являюсь специалистом в сфере здравоохранения и понимаю, что Игра-тапер «Грандаксин может» носит исключительно развлекательный и игровой характер. Я осознаю, что данное приложение не является медицинским инструментом, не призывает к самолечению. Мне известно, что приложение является анонимным и не собирает мои персональные данные.
+                  Я подтверждаю, что являюсь специалистом в сфере здравоохранения и понимаю, что Игра-тапер «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может» носит исключительно развлекательный и игровой характер. Я осознаю, что данное приложение не является медицинским инструментом, не призывает к самолечению. Мне известно, что приложение является анонимным и не собирает мои персональные данные.
                 </p>
               </div>
 
@@ -114,13 +125,17 @@ const App: React.FC = () => {
                 <button
                   onClick={handleDisclaimerAccept}
                   disabled={!canAccept}
-                  className={`relative w-full py-5 rounded-2xl font-black text-xl shadow-xl active:scale-95 transition-all ${
+                  className={`relative w-full py-5 rounded-2xl font-black text-xl transition-all active:scale-95 overflow-hidden ${
                     canAccept 
-                      ? 'bg-white text-slate-900' 
+                      ? 'attention-pulse text-white' 
                       : 'bg-slate-200/80 text-slate-500 cursor-not-allowed'
                   }`}
+                  style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: canAccept ? '#0083C1' : undefined }}
                 >
-                  Я соглашаюсь с этими условиями
+                  {canAccept && (
+                    <span className="absolute inset-0 shimmer-run pointer-events-none z-0" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)', width: '40%' }} />
+                  )}
+                  <span className={canAccept ? 'relative z-10' : ''}>Начать игру</span>
                 </button>
               </div>
             </div>
@@ -155,15 +170,21 @@ const App: React.FC = () => {
               }
               .float-symptom { animation: float 6s ease-in-out infinite; }
               .attention-pulse { animation: attention-pulse 2s ease-in-out infinite; }
-              .shimmer-run { animation: shimmer 2.5s ease-in-out 2s infinite; }
+              .shimmer-run { animation: shimmer 2.5s ease-in-out infinite; }
               .float-vertical { animation: float-vertical 3s ease-in-out infinite; }
               .sight-float { animation: sight-float 2.5s ease-in-out infinite; }
             `}</style>
             <div className="text-center space-y-4">
               <div className="relative flex items-end justify-center gap-0 mb-6 min-h-[9rem]">
-                <img src={redImage} alt="Стресс" className="w-36 h-36 object-contain float-symptom translate-y-3" style={{ animationDelay: '0s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
-                <img src={blueImage} alt="Тревога" className="w-36 h-36 object-contain float-symptom -translate-y-5" style={{ animationDelay: '0.4s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
-                <img src={greenImage} alt="Нервозность" className="w-36 h-36 object-contain float-symptom translate-y-4" style={{ animationDelay: '0.8s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
+                <div className="translate-y-3">
+                  <img src={redImage} alt="Стресс" className="w-36 h-36 object-contain float-symptom" style={{ animationDelay: '0s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
+                </div>
+                <div className="-translate-y-5">
+                  <img src={blueImage} alt="Тревога" className="w-36 h-36 object-contain float-symptom" style={{ animationDelay: '0.4s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
+                </div>
+                <div className="translate-y-4">
+                  <img src={greenImage} alt="Нервозность" className="w-36 h-36 object-contain float-symptom" style={{ animationDelay: '0.8s', filter: 'drop-shadow(0 6px 12px rgba(59, 130, 246, 0.55)) drop-shadow(0 12px 24px rgba(30, 64, 175, 0.4))' }} />
+                </div>
                 <img
                   src={targetImage}
                   alt=""
