@@ -803,23 +803,26 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           {!showInstructions ? (
             <button
               onClick={() => setShowInstructions(true)}
-              className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 active:scale-90 transition-all z-10"
+              className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 active:scale-90 transition-all z-20"
             >
               <img src={infoImage} alt="Инструкция" className="w-8 h-8 object-contain" />
             </button>
-          ) : null}
+          ) : (
+            <button
+              onClick={() => setShowInstructions(false)}
+              className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 active:scale-90 transition-all z-20"
+            >
+              <img src={backIconImage} alt="Назад" className="w-8 h-8 object-contain" />
+            </button>
+          )}
           {showInstructions ? (
             <>
-              <button
-                onClick={() => setShowInstructions(false)}
-                className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 active:scale-90 transition-all z-10"
-              >
-                <img src={backIconImage} alt="Назад" className="w-8 h-8 object-contain" />
-              </button>
-              <h2 className="text-xl font-black text-slate-800 tracking-tight text-center mb-4 w-full max-w-md flex-shrink-0">
-                Краткая инструкция по медицинскому применению лекарственного препарата: Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> (Тофизопам)
-              </h2>
-              <div className="instruction-scroll w-full max-w-md flex-1 min-h-0 overflow-y-auto py-4">
+              <div className="w-full max-w-md mb-2 flex-shrink-0 px-2">
+                <h2 className="text-base font-black text-slate-800 tracking-tight text-left w-full">
+                  Краткая инструкция по медицинскому применению лекарственного препарата: Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> (Тофизопам)
+                </h2>
+              </div>
+              <div className="instruction-scroll w-full max-w-md flex-1 min-h-0 overflow-y-auto pt-2 pb-4">
                 <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-6 space-y-4 shadow-xl shadow-slate-300/30 text-left">
                   <p className="text-slate-700 text-sm leading-relaxed">
                     <span className="font-semibold text-slate-800">Фармакотерапевтическая группа:</span> анксиолитические средства, производные бензодиазепина. Код ATX: N05BA23.
@@ -864,17 +867,19 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
             </>
           ) : (
             <>
-          <h2 className="text-xl font-black text-slate-800 tracking-tight text-center uppercase mb-4 w-full max-w-md">
-            Счет игры<br />
-            «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может»
-          </h2>
+          <div className="w-full max-w-md mb-2 flex-shrink-0 px-2">
+            <h2 className="text-xl font-black text-slate-800 tracking-tight text-center uppercase w-full">
+              Счет игры<br />
+              «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может»
+            </h2>
+          </div>
 
-          <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-6 mb-6 w-full space-y-4 shadow-xl shadow-slate-300/30">
+          <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-4 mb-4 w-full space-y-3 shadow-xl shadow-slate-300/30">
             <div>
-              <div className="text-5xl font-mono font-bold text-slate-800 tracking-tighter">{score}</div>
+              <div className="text-4xl font-mono font-bold text-slate-800 tracking-tighter">{score}</div>
             </div>
             
-            <div className="border-t border-slate-200 pt-4 space-y-3">
+            <div className="border-t border-slate-200 pt-3 space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-slate-600 text-xs font-semibold uppercase tracking-wider">Использовано таблеток:</span>
                 <span className="text-slate-800 font-mono font-bold text-lg">{totalPillsUsed}</span>
@@ -885,9 +890,9 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
                 <span className="text-slate-800 font-mono font-bold text-lg">{Math.ceil(totalPillsUsed / 20)}</span>
               </div>
               
-              <div className="border-t border-slate-200 pt-3">
-                <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-2">Устранено симптомов:</p>
-                <div className="space-y-2">
+              <div className="border-t border-slate-200 pt-4">
+                <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Устранено симптомов:</p>
+                <div className="space-y-1">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <img src={blueImage} alt="Тревога" className="w-8 h-8 object-contain" />
@@ -909,7 +914,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
                     </div>
                     <span className="text-slate-800 font-mono font-bold">{symptomsEliminated.red}</span>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-slate-200">
+                  <div className="flex justify-between items-center pt-1 border-t border-slate-200">
                     <span className="text-slate-700 text-sm font-bold">Всего:</span>
                     <span className="text-slate-800 font-mono font-bold text-lg">{symptomsEliminated.blue + symptomsEliminated.green + symptomsEliminated.red}</span>
                   </div>
@@ -918,12 +923,12 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
             </div>
           </div>
 
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-1 mt-4">
             <div className="relative w-full group">
               <div className="absolute -inset-1 bg-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-1000" />
               <button 
                 onClick={resetGame}
-                className="relative w-full py-5 text-white rounded-2xl font-black text-xl transition-all active:scale-95 overflow-hidden attention-pulse"
+                className="relative w-full py-3 text-white rounded-2xl font-black text-xl transition-all active:scale-95 overflow-hidden attention-pulse"
                 style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: '#0083C1' }}
               >
                 <span className="absolute inset-0 shimmer-run pointer-events-none z-0" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)', width: '40%' }} />
@@ -932,7 +937,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
             </div>
             <span 
               onClick={onExit}
-              className="block w-full py-4 text-center text-slate-600 hover:text-slate-800 font-medium text-base cursor-pointer active:opacity-80 transition-colors"
+              className="block w-full py-2 text-center text-slate-600 hover:text-slate-800 font-medium text-base cursor-pointer active:opacity-80 transition-colors"
               style={{ fontFamily: "'Comic CAT', sans-serif" }}
             >
               Выйти
