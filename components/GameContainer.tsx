@@ -660,7 +660,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         <div className="absolute top-3 left-2 text-[8px] font-black text-white/50 uppercase tracking-[0.2em]">Био-Целостность: {integrity}%</div>
       </div>
 
-      <div className="absolute top-2 left-0 w-full flex flex-col gap-2 px-3 pointer-events-none z-10">
+      <div className="absolute top-2 left-0 w-full flex flex-col gap-2 px-3 pointer-events-none z-[20]">
         <div className="flex justify-between items-center gap-2">
           <div className="bg-slate-900/80 backdrop-blur-xl px-3 py-1.5 rounded-xl border border-white/10 shadow-2xl">
             <p className="text-[8px] text-blue-400 uppercase font-black tracking-widest">Счет</p>
@@ -672,7 +672,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           </div>
           
           <button 
-            onClick={onExit}
+            onClick={() => setGameOver(true)}
             className="p-2 bg-white/5 rounded-xl border border-white/10 text-white/50 hover:text-white pointer-events-auto active:scale-90 transition-all backdrop-blur-md relative z-20"
           >
             <span className="text-base font-bold">✕</span>
