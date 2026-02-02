@@ -16,8 +16,8 @@ const App: React.FC = () => {
     if (isStarted || showDisclaimer) return;
     const id = setInterval(() => {
       setSightTarget((prev) => {
-        const next = Math.floor(Math.random() * 3);
-        return next;
+        const others = [0, 1, 2].filter((i) => i !== prev);
+        return others[Math.floor(Math.random() * others.length)];
       });
     }, 1200 + Math.random() * 800);
     return () => clearInterval(id);
@@ -132,14 +132,31 @@ const App: React.FC = () => {
           <div className="h-full w-full flex flex-col items-center justify-center p-8 space-y-12 animate-in fade-in duration-1000" style={{ background: 'linear-gradient(180deg, #FFFFFF 0%, #75C4E6 100%)' }}>
             <style>{`
               @keyframes float {
+                0%, 100% { transform: translate(0, 0); }
+                25% { transform: translate(6px, -8px); }
+                50% { transform: translate(-5px, 4px); }
+                75% { transform: translate(-4px, -6px); }
+              }
+              @keyframes float-vertical {
                 0%, 100% { transform: translateY(0); }
                 50% { transform: translateY(-8px); }
+              }
+              @keyframes attention-pulse {
+                0%, 100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(0, 131, 193, 0.4); }
+                50% { transform: scale(1.04); box-shadow: 0 10px 40px -5px rgba(0, 131, 193, 0.6); }
+              }
+              @keyframes shimmer {
+                0% { transform: translateX(-100%) skewX(-15deg); }
+                100% { transform: translateX(200%) skewX(-15deg); }
               }
               @keyframes sight-float {
                 0%, 100% { transform: translate(-50%, -50%) translateY(0); }
                 50% { transform: translate(-50%, -50%) translateY(-10px); }
               }
-              .float-symptom { animation: float 3s ease-in-out infinite; }
+              .float-symptom { animation: float 6s ease-in-out infinite; }
+              .attention-pulse { animation: attention-pulse 2s ease-in-out infinite; }
+              .shimmer-run { animation: shimmer 2.5s ease-in-out 2s infinite; }
+              .float-vertical { animation: float-vertical 3s ease-in-out infinite; }
               .sight-float { animation: sight-float 2.5s ease-in-out infinite; }
             `}</style>
             <div className="text-center space-y-4">
@@ -162,10 +179,11 @@ const App: React.FC = () => {
               </h1>
             </div>
 
-            <div className="relative group cursor-pointer w-full max-w-xs mx-auto float-symptom" onClick={handleStartClick} style={{ animationDelay: '0.2s' }}>
+            <div className="relative group cursor-pointer w-full max-w-[180px] mx-auto" onClick={handleStartClick}>
                <div className="absolute -inset-1 bg-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-1000"></div>
-               <button className="relative w-full py-2 text-white rounded-2xl font-black transition-all active:scale-95 shadow-xl" style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: '#0083C1', fontSize: '40px' }}>
-                  СТАРТ
+               <button className="relative w-full py-1.5 text-white rounded-2xl font-black transition-all active:scale-95 attention-pulse overflow-hidden" style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: '#0083C1', fontSize: '28px' }}>
+                  <span className="absolute inset-0 shimmer-run pointer-events-none z-0" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)', width: '40%' }} />
+                  <span className="relative z-10">СТАРТ</span>
                </button>
             </div>
 
