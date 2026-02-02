@@ -4,6 +4,8 @@ import blueImage from '../blue.png';
 import greenImage from '../green.png';
 import redImage from '../red.png';
 import packImage from '../pack.png';
+import infoImage from '../info.png';
+import backIconImage from '../backicon.png';
 
 // Image paths mapping
 const imagePaths: { [key: string]: string } = {
@@ -42,6 +44,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
   const [level, setLevel] = useState(1);
   const [integrity, setIntegrity] = useState(100);
   const [gameOver, setGameOver] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
   
   // Reload Mechanic States
   const [pillsInPack, setPillsInPack] = useState(20);
@@ -181,6 +184,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     setLevel(1);
     setIntegrity(100);
     setGameOver(false);
+    setShowInstructions(false);
     setPillsInPack(20);
     setIsReloading(false);
     setReloadPhase('idle');
@@ -774,6 +778,13 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
       />
 
       <style>{`
+        .instruction-scroll {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .instruction-scroll::-webkit-scrollbar {
+          display: none;
+        }
         @keyframes slideIn {
           from { transform: translateX(100%) rotate(15deg); opacity: 0; }
           to { transform: translateX(0) rotate(0); opacity: 1; }
@@ -786,10 +797,77 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
 
       {gameOver && (
         <div 
-          className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-50 animate-in fade-in duration-500 overflow-y-auto"
+          className={`absolute inset-0 flex flex-col items-center p-8 pt-14 text-center z-50 animate-in fade-in duration-500 overflow-y-auto ${showInstructions ? 'justify-start' : 'justify-center'}`}
           style={{ background: 'linear-gradient(180deg, #FFFFFF 0%, #75C4E6 100%)' }}
         >
-          <h2 className="text-xl font-black text-slate-800 tracking-tight mb-4 w-full max-w-md">Счет игры «Грандаксин может»</h2>
+          {!showInstructions ? (
+            <button
+              onClick={() => setShowInstructions(true)}
+              className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 active:scale-90 transition-all z-10"
+            >
+              <img src={infoImage} alt="Инструкция" className="w-8 h-8 object-contain" />
+            </button>
+          ) : null}
+          {showInstructions ? (
+            <>
+              <button
+                onClick={() => setShowInstructions(false)}
+                className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 active:scale-90 transition-all z-10"
+              >
+                <img src={backIconImage} alt="Назад" className="w-8 h-8 object-contain" />
+              </button>
+              <h2 className="text-xl font-black text-slate-800 tracking-tight text-center mb-4 w-full max-w-md flex-shrink-0">
+                Краткая инструкция по медицинскому применению лекарственного препарата: Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> (Тофизопам)
+              </h2>
+              <div className="instruction-scroll w-full max-w-md flex-1 min-h-0 overflow-y-auto py-4">
+                <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-6 space-y-4 shadow-xl shadow-slate-300/30 text-left">
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Фармакотерапевтическая группа:</span> анксиолитические средства, производные бензодиазепина. Код ATX: N05BA23.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Показания к применению.</span> Препарат Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> показан к применению только у взрослых пациентов в возрасте от 18 лет для лечения: психических (невротических) состояний, сопровождающихся эмоциональным напряжением, тревогой, вегетативными расстройствами, апатией, усталостью и подавленным настроением. Алкогольного абстинентного синдрома.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Способ применения и режим дозирования. Взрослые.</span> Обычно рекомендуемая доза: 1–2 таблетки от 1 до 3 раз в день (общая суточная доза от 50 до 300 мг).
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    При нерегулярном применении можно принять 1–2 таблетки. Постепенное повышение дозы обычно не требуется: лечение можно начинать с необходимой дозы, т. к. препарат хорошо переносится и во время его приема обычно не наблюдается уменьшение активности и психического бодрствования.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Способ применения.</span> Таблетки для приема внутрь.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Противопоказания.</span> Гиперчувствительность к тофизопаму, другим производным группы бензодиазепина или к любому из вспомогательных веществ; детский возраст до 18 лет; беременность; период грудного вскармливания; состояния, сопровождающиеся выраженным психомоторным возбуждением; психические нарушения, тревожно-депрессивный синдром с суицидальными тенденциями; острый респираторный дистресс-синдром; дыхательная недостаточность; синдром обструктивного апноэ; кома; шок; миастения; тяжелая печеночная недостаточность; аритмии, синдром удлиненного интервала QT (врожденный и приобретенный), гипокалиемия.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Фертильность, беременность и период грудного вскармливания.</span><br />
+                    <span className="font-semibold text-slate-800">Беременность.</span> Тофизопам проникает через плацентарный барьер. Применение этого препарата при беременности противопоказано.<br />
+                    <span className="font-semibold text-slate-800">Период грудного вскармливания.</span> Препарат выделяется в грудное молоко, поэтому не рекомендуется его применять во время грудного вскармливания.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Особые меры предосторожности при хранении.</span><br />
+                    Храните препарат при температуре от 15 до 25 °C.
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">ДЕРЖАТЕЛЬ РЕГИСТРАЦИОННОГО УДОСТОВЕРЕНИЯ</span><br />
+                    ЗАО «Фармацевтический завод ЭГИС» 1106 Будапешт, ул. Керестури, 30–38 Телефон: (36-1) 803-5555 Факс: (36-1) 803-5529 Электронная почта: <a href="mailto:mailbox@egis.hu" className="text-blue-600 underline hover:text-blue-800">mailbox@egis.hu</a> Венгрия
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">Представитель держателя регистрационного удостоверения.</span><br />
+                    Представительство ЗАО «Фармацевтический завод ЭГИС» (Венгрия) в Республике Беларусь 220053, г. Минск, пер. Ермака, д. 6А. Контактные телефоны: (017) 380-00-80, (017) 227-35-51 (52), факс (017) 227-35-53 Электронная почта: <a href="mailto:info@egis.by" className="text-blue-600 underline hover:text-blue-800">info@egis.by</a>
+                  </p>
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    <span className="font-semibold text-slate-800">НОМЕР РЕГИСТРАЦИОННОГО УДОСТОВЕРЕНИЯ</span> № 000172 ГП-ВY б/с
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+          <h2 className="text-xl font-black text-slate-800 tracking-tight text-center uppercase mb-4 w-full max-w-md">
+            Счет игры<br />
+            «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может»
+          </h2>
 
           <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 rounded-[2rem] p-6 mb-6 w-full space-y-4 shadow-xl shadow-slate-300/30">
             <div>
@@ -841,19 +919,27 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           </div>
 
           <div className="w-full space-y-3">
-            <button 
-              onClick={resetGame}
-              className="w-full py-5 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-[0.98] transition-all border border-slate-600/50"
-            >
-              Продолжить игру
-            </button>
+            <div className="relative w-full group">
+              <div className="absolute -inset-1 bg-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-1000" />
+              <button 
+                onClick={resetGame}
+                className="relative w-full py-5 text-white rounded-2xl font-black text-xl transition-all active:scale-95 overflow-hidden attention-pulse"
+                style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: '#0083C1' }}
+              >
+                <span className="absolute inset-0 shimmer-run pointer-events-none z-0" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)', width: '40%' }} />
+                <span className="relative z-10">Начать сначала</span>
+              </button>
+            </div>
             <span 
               onClick={onExit}
               className="block w-full py-4 text-center text-slate-600 hover:text-slate-800 font-medium text-base cursor-pointer active:opacity-80 transition-colors"
+              style={{ fontFamily: "'Comic CAT', sans-serif" }}
             >
-              Выйти из игры
+              Выйти
             </span>
           </div>
+            </>
+          )}
         </div>
       )}
     </div>
