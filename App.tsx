@@ -67,7 +67,7 @@ const App: React.FC = () => {
                   Прежде чем начать, пожалуйста, внимательно ознакомьтесь с данной информацией:
                 </p>
                 <p className="text-slate-700 text-sm leading-relaxed">
-                  Игра-тапер «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может» является развлекательным приложением и создана исключительно в игровых и развлекательных целях.
+                  Игра-тапер «Грандаксин<span className="align-super" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '0.5em' }}>®</span> может» является развлекательным приложением и создана исключительно в игровых и развлекательных целях.
                 </p>
                 <p className="text-slate-700 text-sm leading-relaxed">
                   Игра предназначена только для специалистов здравоохранения (включая, но не ограничиваясь, врачей, медсестер, фельдшеров, студентов медицинских вузов, фармацевтов, провизоров, работников аптек и т.д.).
@@ -88,7 +88,7 @@ const App: React.FC = () => {
                   Подтверждение
                 </h2>
                 <p className="text-slate-700 text-sm leading-relaxed">
-                  Я подтверждаю, что являюсь специалистом в сфере здравоохранения и понимаю, что Игра-тапер «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может» носит исключительно развлекательный и игровой характер. Я осознаю, что данное приложение не является медицинским инструментом, не призывает к самолечению. Мне известно, что приложение является анонимным и не собирает мои персональные данные.
+                  Я подтверждаю, что являюсь специалистом в сфере здравоохранения и понимаю, что Игра-тапер «Грандаксин<span className="align-super" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '0.5em' }}>®</span> может» носит исключительно развлекательный и игровой характер. Я осознаю, что данное приложение не является медицинским инструментом, не призывает к самолечению. Мне известно, что приложение является анонимным и не собирает мои персональные данные.
                 </p>
               </div>
 
@@ -195,8 +195,8 @@ const App: React.FC = () => {
                   }}
                 />
               </div>
-              <h1 className="text-5xl font-black tracking-tighter bg-clip-text text-transparent leading-tight" style={{ fontFamily: 'Inter, system-ui, sans-serif', backgroundImage: 'linear-gradient(to bottom, rgb(30, 41, 59), #0083C1)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}>
-                ГРАНДАКСИН<span className="align-super text-3xl" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span><br/>МОЖЕТ
+              <h1 className="text-5xl font-black tracking-tighter bg-clip-text text-transparent leading-tight overflow-visible" style={{ fontFamily: 'Inter, system-ui, sans-serif', backgroundImage: 'linear-gradient(to bottom, rgb(30, 41, 59), #0083C1)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}>
+                ГРАНДАКСИН<span className="align-super text-3xl inline-block pl-0.5 pr-1" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span><br/>МОЖЕТ
               </h1>
             </div>
 

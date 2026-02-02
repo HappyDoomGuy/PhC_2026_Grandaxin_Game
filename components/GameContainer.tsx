@@ -819,7 +819,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
             <>
               <div className="w-full max-w-md mb-2 flex-shrink-0 px-2">
                 <h2 className="text-base font-black text-slate-800 tracking-tight text-left w-full">
-                  Краткая инструкция по медицинскому применению лекарственного препарата: Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> (Тофизопам)
+                  Краткая инструкция по медицинскому применению лекарственного препарата: Грандаксин<span className="align-super" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '0.5em' }}>®</span> (Тофизопам)
                 </h2>
               </div>
               <div className="instruction-scroll w-full max-w-md flex-1 min-h-0 overflow-y-auto pt-2 pb-4">
@@ -828,7 +828,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
                     <span className="font-semibold text-slate-800">Фармакотерапевтическая группа:</span> анксиолитические средства, производные бензодиазепина. Код ATX: N05BA23.
                   </p>
                   <p className="text-slate-700 text-sm leading-relaxed">
-                    <span className="font-semibold text-slate-800">Показания к применению.</span> Препарат Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> показан к применению только у взрослых пациентов в возрасте от 18 лет для лечения: психических (невротических) состояний, сопровождающихся эмоциональным напряжением, тревогой, вегетативными расстройствами, апатией, усталостью и подавленным настроением. Алкогольного абстинентного синдрома.
+                    <span className="font-semibold text-slate-800">Показания к применению.</span> Препарат Грандаксин<span className="align-super" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '0.5em' }}>®</span> показан к применению только у взрослых пациентов в возрасте от 18 лет для лечения: психических (невротических) состояний, сопровождающихся эмоциональным напряжением, тревогой, вегетативными расстройствами, апатией, усталостью и подавленным настроением. Алкогольного абстинентного синдрома.
                   </p>
                   <p className="text-slate-700 text-sm leading-relaxed">
                     <span className="font-semibold text-slate-800">Способ применения и режим дозирования. Взрослые.</span> Обычно рекомендуемая доза: 1–2 таблетки от 1 до 3 раз в день (общая суточная доза от 50 до 300 мг).
@@ -870,7 +870,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           <div className="w-full max-w-md mb-2 flex-shrink-0 px-2">
             <h2 className="text-xl font-black text-slate-800 tracking-tight text-center uppercase w-full">
               Счет игры<br />
-              «Грандаксин<span style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span> может»
+              «Грандаксин<span className="align-super" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '0.5em' }}>®</span> может»
             </h2>
           </div>
 
