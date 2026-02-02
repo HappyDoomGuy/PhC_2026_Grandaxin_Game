@@ -195,8 +195,8 @@ const App: React.FC = () => {
                   }}
                 />
               </div>
-              <h1 className="text-5xl font-black tracking-tighter bg-clip-text text-transparent leading-tight overflow-visible" style={{ fontFamily: 'Inter, system-ui, sans-serif', backgroundImage: 'linear-gradient(to bottom, rgb(30, 41, 59), #0083C1)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}>
-                ГРАНДАКСИН<span className="align-super text-3xl inline-block pl-0.5 pr-1" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span><br/>МОЖЕТ
+              <h1 className="text-[2.6rem] font-black tracking-tighter bg-clip-text text-transparent leading-tight overflow-visible" style={{ fontFamily: 'Inter, system-ui, sans-serif', backgroundImage: 'linear-gradient(to bottom, rgb(30, 41, 59), #0083C1)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}>
+                <span className="whitespace-nowrap">ГРАНДАКСИН<span className="align-super text-3xl pl-0.5 pr-1" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>®</span></span><br/>МОЖЕТ
               </h1>
             </div>
 
