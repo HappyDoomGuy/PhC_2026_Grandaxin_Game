@@ -4,6 +4,7 @@ import blueImage from '../blue.png';
 import greenImage from '../green.png';
 import redImage from '../red.png';
 import packImage from '../pack.png';
+import box90Image from '../90.png';
 import infoImage from '../info.png';
 import backIconImage from '../backicon.png';
 
@@ -14,13 +15,15 @@ const imagePaths: { [key: string]: string } = {
   'red.png': redImage
 };
 
+type BoxType = 'pack' | 'grandaxin90';
+
 interface GameObject {
   x: number;
   y: number;
   radius: number;
   vx: number;
   vy: number;
-  type: 'pill' | 'symptom' | 'particle';
+  type: 'pill' | 'symptom' | 'particle' | 'bonus';
   color?: string;
   id: number;
   health: number;
@@ -51,6 +54,12 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
   const [isReloading, setIsReloading] = useState(false);
   const [reloadPhase, setReloadPhase] = useState<'idle' | 'exiting' | 'entering'>('idle');
   const [imgError, setImgError] = useState(false);
+
+  // Grandaxin 90 box (bonus)
+  const [boxType, setBoxType] = useState<BoxType>('pack');
+  const boxTypeRef = useRef<BoxType>('pack');
+  const [showBonusPopup, setShowBonusPopup] = useState(false);
+  const hasGrandaxin90UnlockedRef = useRef(false);
   
   // Statistics
   const [totalPillsUsed, setTotalPillsUsed] = useState(0);
@@ -62,6 +71,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
   const integrityRef = useRef(100);
   const gameOverRef = useRef(false);
   const lastSpawnRef = useRef(0);
+  const lastBonusSpawnRef = useRef(0);
   const nextIdRef = useRef(0);
   const [isPulsing, setIsPulsing] = useState(false);
   const [boxOffsetX, setBoxOffsetX] = useState(0);
@@ -72,13 +82,18 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
   
   // Symptom images
   const symptomImagesRef = useRef<{ [key: string]: HTMLImageElement }>({});
+  // Bonus flying object image
+  const bonusImageRef = useRef<HTMLImageElement | null>(null);
 
+  const showBonusPopupRef = useRef(false);
   useEffect(() => {
     scoreRef.current = score;
     levelRef.current = level;
     integrityRef.current = integrity;
     gameOverRef.current = gameOver;
-  }, [score, level, integrity, gameOver]);
+    boxTypeRef.current = boxType;
+    showBonusPopupRef.current = showBonusPopup;
+  }, [score, level, integrity, gameOver, boxType, showBonusPopup]);
 
 
   // Space background animation
@@ -180,12 +195,16 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     integrityRef.current = 100;
     gameOverRef.current = false;
     lastSpawnRef.current = performance.now();
+    lastBonusSpawnRef.current = 0;
+    hasGrandaxin90UnlockedRef.current = false;
     setScore(0);
     setLevel(1);
     setIntegrity(100);
     setGameOver(false);
     setShowInstructions(false);
     setPillsInPack(20);
+    setBoxType('pack');
+    setShowBonusPopup(false);
     setIsReloading(false);
     setReloadPhase('idle');
     setBoxOffsetX(0);
@@ -303,6 +322,31 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     });
   };
 
+  const spawnBonus = (width: number, height: number) => {
+    const side = Math.random() > 0.5 ? 'left' : 'right';
+    const radius = 38 + Math.random() * 8;
+    const health = 3;
+    const speedMult = 0.5 + Math.random() * 0.2;
+    const baseSpeed = 0.6 + Math.random() * 0.5;
+    const vx = (side === 'left' ? baseSpeed : -baseSpeed) * speedMult;
+    const startX = side === 'left' ? -radius : width + radius;
+    const startY = 80 + Math.random() * (height * 0.45);
+
+    objectsRef.current.push({
+      id: nextIdRef.current++,
+      x: startX,
+      y: startY,
+      radius,
+      vx,
+      vy: 0,
+      type: 'bonus',
+      color: '#ffd700',
+      health,
+      maxHealth: health,
+      side
+    });
+  };
+
   const triggerReload = () => {
     if (isReloading) return;
     
@@ -316,10 +360,9 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     const animationDuration = 600;
     
     setTimeout(() => {
+      setBoxType('pack');
       setPillsInPack(20);
-      // Восстанавливаем позицию перед entering
       setBoxOffsetX(savedBoxOffsetXRef.current);
-      // Минимальная задержка для применения изменений
       setTimeout(() => {
         setReloadPhase('entering');
         
@@ -336,22 +379,33 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     }, animationDuration);
   };
 
+  const addPillAt = (x: number, canvasHeight: number) => {
+    objectsRef.current.push({
+      id: nextIdRef.current++,
+      x,
+      y: canvasHeight - 120,
+      radius: 10,
+      vx: 0,
+      vy: -20,
+      type: 'pill',
+      health: 1,
+      maxHealth: 1
+    });
+  };
+
   const shootPill = (originX: number) => {
     if (gameOverRef.current || isReloading) return;
-    
-    if (pillsInPack <= 0) {
-      triggerReload();
+
+    const consume = boxType === 'grandaxin90' ? 3 : 1;
+    if (pillsInPack < consume) {
+      if (pillsInPack <= 0) triggerReload();
       return;
     }
 
-    // Увеличиваем счетчик использованных таблеток ДО уменьшения количества
-    setTotalPillsUsed(prev => prev + 1);
-
+    setTotalPillsUsed(prev => prev + consume);
     setPillsInPack(prev => {
-      const next = prev - 1;
-      if (next === 0) {
-        setTimeout(triggerReload, 100);
-      }
+      const next = prev - consume;
+      if (next === 0) setTimeout(triggerReload, 100);
       return next;
     });
 
@@ -362,17 +416,13 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    objectsRef.current.push({
-      id: nextIdRef.current++,
-      x: originX,
-      y: canvas.height - 120,
-      radius: 10,
-      vx: 0,
-      vy: -20,
-      type: 'pill',
-      health: 1,
-      maxHealth: 1
-    });
+    if (boxType === 'grandaxin90') {
+      addPillAt(originX - 12, canvas.height);
+      setTimeout(() => addPillAt(originX, canvas.height), 50);
+      setTimeout(() => addPillAt(originX + 12, canvas.height), 100);
+    } else {
+      addPillAt(originX, canvas.height);
+    }
   };
 
   const handleBoxInteraction = (e: React.MouseEvent | React.TouchEvent) => {
@@ -445,7 +495,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     }, Math.max(0, Math.min(100, shootDelay)));
   };
 
-  // Load symptom images
+  // Load symptom images and bonus image
   useEffect(() => {
     const imageNames = ['blue.png', 'green.png', 'red.png'];
     imageNames.forEach(name => {
@@ -455,6 +505,11 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         symptomImagesRef.current[name] = img;
       };
     });
+    const bonusImg = new Image();
+    bonusImg.src = '/bonus.png';
+    bonusImg.onload = () => {
+      bonusImageRef.current = bonusImg;
+    };
   }, []);
 
   useEffect(() => {
@@ -478,6 +533,10 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         animationId = requestAnimationFrame(update);
         return;
       }
+      if (showBonusPopupRef.current) {
+        animationId = requestAnimationFrame(update);
+        return;
+      }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -491,6 +550,12 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         lastSpawnRef.current = time;
       }
 
+      const bonusSpawnInterval = 28000 + Math.random() * 17000;
+      if (time - lastBonusSpawnRef.current > bonusSpawnInterval) {
+        spawnBonus(canvas.width, canvas.height);
+        lastBonusSpawnRef.current = time;
+      }
+
       // Прозрачный фон, чтобы видеть звезды
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'rgba(10, 15, 30, 0.7)';
@@ -502,7 +567,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         
         let currentVX = obj.vx;
         let currentVY = obj.vy;
-        if (obj.type === 'symptom') {
+        if (obj.type === 'symptom' || obj.type === 'bonus') {
           currentVY = Math.sin(time / 350 + obj.id) * 1.5;
         }
         
@@ -532,7 +597,6 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
                   playSound('pop');
                   setScore(s => s + (target.maxHealth * 10));
                   
-                  // Увеличиваем счетчик устраненных симптомов по типу
                   if (target.imageSrc) {
                     if (target.imageSrc === 'blue.png') {
                       setSymptomsEliminated(prev => ({ ...prev, blue: prev.blue + 1 }));
@@ -550,6 +614,34 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
                 break;
               }
             }
+            if (target.type === 'bonus') {
+              const dx = obj.x - target.x;
+              const dy = obj.y - target.y;
+              const dist = Math.sqrt(dx*dx + dy*dy);
+              if (dist < obj.radius + target.radius) {
+                target.health -= 1;
+                createParticles(obj.x, obj.y, target.color || '#ffd700', target.health <= 0 ? 12 : 5);
+                objects.splice(i, 1);
+                if (target.health <= 0) {
+                  playSound('pop');
+                  setScore(s => s + 30);
+                  objects.splice(j, 1);
+                  const unlocked = hasGrandaxin90UnlockedRef.current;
+                  const currentBox = boxTypeRef.current;
+                  if (!unlocked) {
+                    setShowBonusPopup(true);
+                  } else if (currentBox === 'pack') {
+                    setBoxType('grandaxin90');
+                    setPillsInPack(90);
+                  } else {
+                    setPillsInPack(90);
+                  }
+                } else {
+                  playSound('bossHit');
+                }
+                break;
+              }
+            }
           }
         }
 
@@ -557,6 +649,8 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           drawPill(ctx, obj.x, obj.y, obj.radius);
         } else if (obj.type === 'symptom') {
           drawSymptom(ctx, obj, time);
+        } else if (obj.type === 'bonus') {
+          drawBonus(ctx, obj, time);
         } else if (obj.type === 'particle') {
           ctx.save();
           ctx.globalAlpha = obj.life!;
@@ -582,6 +676,11 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
               gameOverRef.current = true;
             }
           }
+        }
+        if (obj.type === 'bonus') {
+          const leaked = (obj.side === 'left' && obj.x > canvas.width + obj.radius) || 
+                         (obj.side === 'right' && obj.x < -obj.radius);
+          if (leaked) objects.splice(i, 1);
         }
       }
 
@@ -640,6 +739,48 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         ctx.fill();
       }
       
+      ctx.restore();
+    };
+
+    const drawBonus = (ctx: CanvasRenderingContext2D, obj: GameObject, time: number) => {
+      const { x, y, radius: r, color } = obj;
+      ctx.save();
+      if (bonusImageRef.current) {
+        const img = bonusImageRef.current;
+        const size = r * 2;
+        const glowColor = color || '#ffd700';
+        ctx.shadowColor = glowColor;
+        ctx.shadowBlur = 42;
+        ctx.globalAlpha = 0.85;
+        ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = glowColor;
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+      } else {
+        ctx.shadowColor = color || '#ffd700';
+        ctx.shadowBlur = 24;
+        const grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+        grad.addColorStop(0, '#fffacd');
+        grad.addColorStop(0.5, '#ffd700');
+        grad.addColorStop(0.9, '#daa520');
+        grad.addColorStop(1, 'rgba(218, 165, 32, 0.4)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        const points = 10;
+        const maxHealth = obj.maxHealth;
+        for (let i = 0; i < points; i++) {
+          const angle = (i / points) * Math.PI * 2 + time / 300;
+          const off = Math.sin(time / 150 + i) * (maxHealth * 2);
+          const px = x + Math.cos(angle) * (r + off);
+          const py = y + Math.sin(angle) * (r + off);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
       ctx.restore();
     };
 
@@ -716,14 +857,21 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
             <div className="relative flex items-center justify-center">
               
               {!imgError ? (
-                <img 
-                  src={packImage} 
-                  alt="Pill Pack" 
-                  draggable="false"
-                  onDragStart={(e) => e.preventDefault()}
-                  onError={() => setImgError(true)}
-                  className={`max-h-20 w-auto object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.6)] select-none ${isReloading ? 'blur-[1px] grayscale-[0.3]' : ''}`}
-                />
+                <span
+                  className={`inline-flex items-center justify-center ${boxType === 'grandaxin90' ? 'rounded-lg' : ''}`}
+                  style={boxType === 'grandaxin90' ? {
+                    boxShadow: '0 0 14px rgba(255,230,150,1), 0 0 32px rgba(255,210,100,0.95), 0 0 48px rgba(255,180,80,0.75), 0 15px 35px rgba(0,0,0,0.45)'
+                  } : undefined}
+                >
+                  <img 
+                    src={boxType === 'grandaxin90' ? box90Image : packImage} 
+                    alt={boxType === 'grandaxin90' ? 'Грандаксин 90 мг' : 'Pill Pack'} 
+                    draggable="false"
+                    onDragStart={(e) => e.preventDefault()}
+                    onError={() => setImgError(true)}
+                    className={`max-h-20 w-auto object-contain select-none ${isReloading ? 'blur-[1px] grayscale-[0.3]' : ''} ${boxType === 'grandaxin90' ? '' : 'drop-shadow-[0_15px_35px_rgba(0,0,0,0.6)]'}`}
+                  />
+                </span>
               ) : (
                 /* High-fidelity CSS Fallback Pack */
                 <div className={`w-auto h-20 bg-white rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] border-b-[6px] border-slate-200 overflow-hidden flex flex-col justify-center px-6 relative ${isReloading ? 'grayscale' : ''}`}>
@@ -752,13 +900,20 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         </div>
         
         <div className="flex items-center justify-center mt-4 px-2">
-          <div className="flex items-center gap-1.5">
-            {[...Array(20)].map((_, i) => (
-              <div 
-                key={i} 
-                className={`w-3 h-3 rounded-full border border-white/10 transition-all duration-500 ${i < pillsInPack ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'bg-white/5'}`} 
-              />
-            ))}
+          <div className="flex items-center gap-1.5 flex-wrap justify-center max-w-full">
+            {boxType === 'pack'
+              ? [...Array(20)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`w-3 h-3 rounded-full border border-white/10 transition-all duration-500 ${i < pillsInPack ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'bg-white/5'}`} 
+                  />
+                ))
+              : [...Array(30)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`w-2.5 h-2.5 rounded-full border border-white/10 transition-all duration-500 ${i < Math.ceil(pillsInPack / 3) ? 'bg-amber-200 shadow-[0_0_6px_rgba(255,200,100,0.5)]' : 'bg-white/5'}`} 
+                  />
+                ))}
           </div>
         </div>
       </div>
@@ -771,11 +926,35 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
         onTouchEnd={(e) => e.preventDefault()}
         className="absolute inset-0 w-full h-full z-[15] cursor-pointer"
         style={{ 
-          pointerEvents: gameOver || isReloading ? 'none' : 'auto',
+          pointerEvents: gameOver || isReloading || showBonusPopup ? 'none' : 'auto',
           backgroundColor: 'transparent',
           touchAction: 'manipulation'
         }}
       />
+
+      {/* Попап поверх игры: получена коробка Грандаксин 90 мг */}
+      {showBonusPopup && (
+        <div className="absolute inset-0 flex items-center justify-center p-4 z-50 bg-black/50 backdrop-blur-[2px]">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xl max-w-[280px] w-full flex flex-col items-center text-center gap-4 animate-in zoom-in-95 duration-200">
+            <h2 className="text-base font-black text-slate-800 tracking-tight leading-tight">
+              Поздравляем, вы получаете коробку Грандаксин<span className="align-super" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '0.5em' }}>®</span> 90 мг
+            </h2>
+            <img src={box90Image} alt="Грандаксин 90 мг" className="max-h-28 w-auto object-contain drop-shadow-md" />
+            <button
+              onClick={() => {
+                hasGrandaxin90UnlockedRef.current = true;
+                setBoxType('grandaxin90');
+                setPillsInPack(90);
+                setShowBonusPopup(false);
+              }}
+              className="w-full py-2.5 rounded-xl font-black text-base text-white transition-all active:scale-95"
+              style={{ fontFamily: "'Comic CAT', sans-serif", backgroundColor: '#0083C1' }}
+            >
+              Продолжить игру
+            </button>
+          </div>
+        </div>
+      )}
 
       <style>{`
         .instruction-scroll {
