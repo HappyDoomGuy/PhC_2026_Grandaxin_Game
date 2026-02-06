@@ -5,6 +5,7 @@ import greenImage from '../green.png';
 import redImage from '../red.png';
 import packImage from '../pack.png';
 import box90Image from '../90.png';
+import bonusImage from '../bonus.png';
 import infoImage from '../info.png';
 import backIconImage from '../backicon.png';
 
@@ -506,7 +507,7 @@ const GameContainer: React.FC<{ onExit: () => void }> = ({ onExit }) => {
       };
     });
     const bonusImg = new Image();
-    bonusImg.src = '/bonus.png';
+    bonusImg.src = bonusImage;
     bonusImg.onload = () => {
       bonusImageRef.current = bonusImg;
     };
